@@ -14,7 +14,7 @@ def split_into_paragraphs(all_text):
 
     paragraphs = []
 
-    # Group sentences into paragraphs (3 sentences per paragraph)
+    # Group sentences into paragraphs (3 sentences per paragraph but could have this scale with larger texts)
     for i in range(0, len(sentences), 3):
         paragraph = ". ".join(sentences[i : i + 3]) + "."
         paragraphs.append(paragraph)

@@ -11,15 +11,21 @@ def split_into_paragraphs(all_text):
     sentences = all_text.split(".")
 
     sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
-
     paragraphs = []
 
-    # Group sentences into paragraphs (3 sentences per paragraph but could have this scale with larger texts)
-    for i in range(0, len(sentences), 3):
-        paragraph = ". ".join(sentences[i : i + 3]) + "."
-        paragraphs.append(paragraph)
+    # Group sentences into paragraphs (3 to 5 sentences per paragraph)
+    if len(sentences) <= 30:
+        for i in range(0, len(sentences), 3):
+            paragraph = ". ".join(sentences[i : i + 3]) + "."
+            paragraphs.append(paragraph)
 
-    return paragraphs
+        return paragraphs
+    else:
+        for i in range(0, len(sentences), 5):
+            paragraph = ". ".join(sentences[i : i + 5]) + "."
+            paragraphs.append(paragraph)
+
+        return paragraphs
 
 
 def gen_summary(paragraphs):

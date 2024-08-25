@@ -1,3 +1,4 @@
+import os
 import re
 
 
@@ -64,9 +65,10 @@ def gen_summary(paragraphs):
         return f"{first_section}\n{one_sixth_section}\n{one_third_section}\n{middle_section}\n{two_thirds_section}\n{five_sixths_section}\n{last_section}"
 
 
-with open("No_ai_summary\story.txt", "r") as file:
+
+with open(os.path.join("No_ai_summary", "story.txt"), "r") as file:
     data = file.read()
 
 paragraphs = split_into_paragraphs(data)
 
-print(f"Your summary without using AI: \n\n{gen_summary(paragraphs)}")
+print(f"\nYour summary without using AI: \n\n{gen_summary(paragraphs)}\n")

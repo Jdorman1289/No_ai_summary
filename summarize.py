@@ -1,3 +1,30 @@
+import re
+
+
+def split_into_paragraphs(text):
+    # Remove extra whitespace and split into sentences
+    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+
+    paragraphs = []
+    current_paragraph = []
+
+    for sentence in sentences:
+        current_paragraph.append(sentence)
+
+        # Check for paragraph break conditions
+        if len(current_paragraph) >= 5 or (
+            len(sentence) > 100 and len(current_paragraph) >= 3
+        ):
+            paragraphs.append(" ".join(current_paragraph))
+            current_paragraph = []
+
+    # Add any remaining sentences as the last paragraph
+    if current_paragraph:
+        paragraphs.append(" ".join(current_paragraph))
+
+    return paragraphs
+
+
 def find_middle_index(lst):
     length = len(lst)
 
@@ -7,79 +34,37 @@ def find_middle_index(lst):
         return length // 2 - 1
 
 
-def split_into_paragraphs(all_text):
-    sentences = all_text.split(".")
-
-    sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
-    paragraphs = []
-
-    # Group sentences into paragraphs (3 to 5 sentences per paragraph)
-    if len(sentences) <= 30:
-        for i in range(0, len(sentences), 3):
-            paragraph = ". ".join(sentences[i : i + 3]) + "."
-            paragraphs.append(paragraph)
-
-        return paragraphs
-    else:
-        for i in range(0, len(sentences), 5):
-            paragraph = ". ".join(sentences[i : i + 5]) + "."
-            paragraphs.append(paragraph)
-
-        return paragraphs
-
-
 def gen_summary(paragraphs):
-    if len(paragraphs) <= 10:
+    if len(paragraphs) <= 5:
+        # For very short texts, return all paragraphs
+        return "\n".join(paragraphs)
+    elif len(paragraphs) <= 10:
+        # For short texts, return first, middle, and last paragraphs
         first_section = paragraphs[0]
         middle_section = paragraphs[find_middle_index(paragraphs)]
         last_section = paragraphs[-1]
         return f"{first_section}\n{middle_section}\n{last_section}"
-
     elif len(paragraphs) <= 20:
+        # For medium-length texts, return five sections
         first_section = paragraphs[0]
-        second_section = paragraphs[
-            find_middle_index(paragraphs[: find_middle_index(paragraphs)])
-        ]
+        quarter_section = paragraphs[len(paragraphs) // 4]
         middle_section = paragraphs[find_middle_index(paragraphs)]
-        fourth_section = paragraphs[
-            find_middle_index(paragraphs[find_middle_index(paragraphs) + 1 :])
-            + find_middle_index(paragraphs)
-            + 1
-        ]
+        three_quarter_section = paragraphs[3 * len(paragraphs) // 4]
         last_section = paragraphs[-1]
-        return f"{first_section}\n{second_section}\n{middle_section}\n{fourth_section}\n{last_section}"
+        return f"{first_section}\n{quarter_section}\n{middle_section}\n{three_quarter_section}\n{last_section}"
     else:
+        # For long texts, return seven sections
         first_section = paragraphs[0]
-        second_section = paragraphs[
-            find_middle_index(paragraphs[: find_middle_index(paragraphs)])
-        ]
-        third_section = paragraphs[
-            find_middle_index(paragraphs[: find_middle_index(paragraphs) + 1])
-            + find_middle_index(paragraphs[: find_middle_index(paragraphs)])
-        ]
+        one_sixth_section = paragraphs[len(paragraphs) // 6]
+        one_third_section = paragraphs[len(paragraphs) // 3]
         middle_section = paragraphs[find_middle_index(paragraphs)]
-        fifth_section = paragraphs[
-            find_middle_index(paragraphs[find_middle_index(paragraphs) + 1 :])
-            + find_middle_index(paragraphs)
-            + 1
-        ]
-        sixth_section = paragraphs[
-            find_middle_index(
-                paragraphs[
-                    find_middle_index(paragraphs[find_middle_index(paragraphs) + 1 :])
-                    + find_middle_index(paragraphs)
-                    + 1 :
-                ]
-            )
-            + find_middle_index(paragraphs[find_middle_index(paragraphs) + 1 :])
-            + find_middle_index(paragraphs)
-            + 1
-        ]
+        two_thirds_section = paragraphs[2 * len(paragraphs) // 3]
+        five_sixths_section = paragraphs[5 * len(paragraphs) // 6]
         last_section = paragraphs[-1]
-        return f"{first_section}\n{second_section}\n{third_section}\n{middle_section}\n{fifth_section}\n{sixth_section}\n{last_section}"
+        return f"{first_section}\n{one_sixth_section}\n{one_third_section}\n{middle_section}\n{two_thirds_section}\n{five_sixths_section}\n{last_section}"
 
 
-with open("story.txt", "r") as file:
+with open("No_ai_summary\story.txt", "r") as file:
     data = file.read()
 
 paragraphs = split_into_paragraphs(data)

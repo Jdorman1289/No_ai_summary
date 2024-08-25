@@ -1,7 +1,9 @@
 import re
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/summarize": {"origins": "http://127.0.0.1:5500"}})
 
 def split_into_paragraphs(text):
     # Remove extra whitespace and split into sentences
@@ -65,8 +67,10 @@ def gen_summary(paragraphs):
         last_section = paragraphs[-1]
         return f"{first_section}\n{one_sixth_section}\n{one_third_section}\n{middle_section}\n{two_thirds_section}\n{five_sixths_section}\n{last_section}"
 
-@app.route('/summarize', methods=['POST'])
+@app.route('/summarize', methods=['POST', 'OPTIONS'])
 def summarize():
+    if request.method == 'OPTIONS':
+        return '', 204
     data = request.json.get('text', '')
     if not data:
         return jsonify({"error": "No text provided"}), 400

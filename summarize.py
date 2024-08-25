@@ -1,6 +1,7 @@
-import os
 import re
+from flask import Flask, request, jsonify
 
+app = Flask(__name__)
 
 def split_into_paragraphs(text):
     # Remove extra whitespace and split into sentences
@@ -64,11 +65,15 @@ def gen_summary(paragraphs):
         last_section = paragraphs[-1]
         return f"{first_section}\n{one_sixth_section}\n{one_third_section}\n{middle_section}\n{two_thirds_section}\n{five_sixths_section}\n{last_section}"
 
+@app.route('/summarize', methods=['POST'])
+def summarize():
+    data = request.json.get('text', '')
+    if not data:
+        return jsonify({"error": "No text provided"}), 400
 
+    paragraphs = split_into_paragraphs(data)
+    summary = gen_summary(paragraphs)
+    return jsonify({"summary": summary})
 
-with open(os.path.join("No_ai_summary", "story.txt"), "r") as file:
-    data = file.read()
-
-paragraphs = split_into_paragraphs(data)
-
-print(f"\nYour summary without using AI: \n\n{gen_summary(paragraphs)}\n")
+if __name__ == '__main__':
+    app.run(debug=True)
